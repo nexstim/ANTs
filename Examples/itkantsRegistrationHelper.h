@@ -914,7 +914,7 @@ private:
     const unsigned int                                                     numberOfLevels,
     const std::vector<ShrinkFactorsPerDimensionContainerType>              shrinkFactorsPerDimensionForAllLevels,
     const typename RegistrationMethodType::SmoothingSigmasArrayType        smoothingSigmasPerLevel,
-    typename AffineRegistrationType::MetricSamplingStrategyEnum            metricSamplingStrategy,
+    typename AffineRegistrationType::MetricSamplingStrategyType            metricSamplingStrategy,
     const float                                                            samplingPercentage)
   {
     typename RegistrationMethodType::Pointer                     registrationMethod = RegistrationMethodType::New();
@@ -958,7 +958,7 @@ private:
     registrationMethod->SetSmoothingSigmasAreSpecifiedInPhysicalUnits(
       this->m_SmoothingSigmasAreInPhysicalUnits[currentStageNumber]);
     registrationMethod->SetMetricSamplingStrategy(
-      static_cast<typename RegistrationMethodType::MetricSamplingStrategyEnum>(metricSamplingStrategy));
+      static_cast<typename RegistrationMethodType::MetricSamplingStrategyType>(metricSamplingStrategy));
     registrationMethod->SetMetricSamplingPercentage(samplingPercentage);
 
     if (this->m_RestrictDeformationOptimizerWeights.size() > currentStageNumber)
@@ -1038,7 +1038,7 @@ private:
     const unsigned int                                                     numberOfLevels,
     const std::vector<ShrinkFactorsPerDimensionContainerType>              shrinkFactorsPerDimensionForAllLevels,
     const typename RegistrationMethodType::SmoothingSigmasArrayType        smoothingSigmasPerLevel,
-    typename AffineRegistrationType::MetricSamplingStrategyEnum            metricSamplingStrategy,
+    typename AffineRegistrationType::MetricSamplingStrategyType            metricSamplingStrategy,
     const float                                                            samplingPercentage)
   {
     typename RegistrationMethodType::Pointer registrationMethod =
@@ -1079,7 +1079,7 @@ private:
     }
     catch (const itk::ExceptionObject & e)
     {
-      this->Logger() << "Exception caught: " << e << std::endl;
+      this->Logger() << "Exception caught: " << e.GetDescription() << std::endl;
       return EXIT_FAILURE;
     }
 

@@ -28,7 +28,7 @@
 #include "itkNearestNeighborInterpolateImageFunction.h"
 #include "itkWindowedSincInterpolateImageFunction.h"
 #include "itkLabelImageGaussianInterpolateImageFunction.h"
-#include "itkLabelImageGenericInterpolateImageFunction.h"
+// #include "itkLabelImageGenericInterpolateImageFunction.h"
 
 namespace ants
 {
@@ -797,7 +797,7 @@ antsApplyTransforms(itk::ants::CommandLineParser::Pointer & parser, unsigned int
           if (verbose)
           {
             std::cerr << "Caught an ITK exception: " << std::endl;
-            std::cerr << err << " " << __FILE__ << " " << __LINE__ << std::endl;
+            std::cerr << err.GetDescription() << " " << __FILE__ << " " << __LINE__ << std::endl;
           }
           return EXIT_FAILURE;
           // throw &err;

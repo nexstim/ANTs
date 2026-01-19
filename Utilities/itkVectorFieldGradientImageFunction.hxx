@@ -383,7 +383,7 @@ VectorFieldGradientImageFunction<TInputImage, TRealType, TOutputImage>::Evaluate
   MatrixType E(ImageDimension, ImageDimension);
 
   typename MatrixType::InternalMatrixType ff =
-    vnl_matrix_inverse<RealType>(F.GetVnlMatrix() * F.GetTranspose()).as_matrix();
+    vnl_matrix_inverse<RealType>(F.GetVnlMatrix() * F.GetTranspose()); // .as_matrix();
   for (unsigned int i = 0; i < ff.rows(); i++)
   {
     for (unsigned int j = 0; j < ff.columns(); j++)

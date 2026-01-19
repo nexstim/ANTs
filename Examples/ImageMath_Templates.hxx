@@ -66,7 +66,7 @@
 #include "itkImageRandomConstIteratorWithIndex.h"
 #include "itkImageRegionIterator.h"
 #include "itkImageRegionIteratorWithIndex.h"
-#include "itkLabelGeometryImageFilter.h"
+// #include "itkLabelGeometryImageFilter.h"
 #include "itkLabelOverlapMeasuresImageFilter.h"
 #include "itkLabelPerimeterEstimationCalculator.h"
 #include "itkKdTree.h"
@@ -127,6 +127,7 @@
 #include "itkTransformFactory.h"
 #include "itkSurfaceImageCurvature.h"
 #include "itkMultiScaleLaplacianBlobDetectorImageFilter.h"
+#include "itkFastMarchingBase.h"
 
 #include <fstream>
 #include <iostream>
@@ -1148,7 +1149,7 @@ TileImages(unsigned int argc, char * argv[])
     // Get the image dimension
     std::string                        fn = std::string(argv[j]);
     typename itk::ImageIOBase::Pointer imageIO =
-      itk::ImageIOFactory::CreateImageIO(fn.c_str(), itk::IOFileModeEnum::ReadMode);
+      itk::ImageIOFactory::CreateImageIO(fn.c_str(), itk::ImageIOFactory::ReadMode);
     imageIO->SetFileName(fn.c_str());
     imageIO->ReadImageInformation();
 
@@ -6032,7 +6033,7 @@ TensorFunctions(int argc, char * argv[])
     std::cout << " Convert a 4D tensor to a 3D tensor --- if there are 7 components to the tensor, we throw away the "
                  "first component b/c its probably b0 "
               << std::endl;
-    itk::ImageIOBase::Pointer imageIO = itk::ImageIOFactory::CreateImageIO(fn1.c_str(), itk::IOFileModeEnum::ReadMode);
+    itk::ImageIOBase::Pointer imageIO = itk::ImageIOFactory::CreateImageIO(fn1.c_str(), itk::ImageIOFactory::ReadMode);
     imageIO->SetFileName(fn1.c_str());
     imageIO->ReadImageInformation();
     unsigned int dim = imageIO->GetNumberOfDimensions();
@@ -8178,12 +8179,12 @@ PropagateLabelsThroughMask(int argc, char * argv[])
     if (topocheck == 1) // Strict
     {
       // std::cout << " strict " << std::endl;
-      fastMarching->SetTopologyCheck(itk::FastMarchingTraitsEnums::TopologyCheck::Strict);
+      fastMarching->SetTopologyCheck(FastMarchingFilterType::TopologyCheckType::Strict);
     }
     if (topocheck == 2) // No handles
     {
       // std::cout << " no handles " << std::endl;
-      fastMarching->SetTopologyCheck(itk::FastMarchingTraitsEnums::TopologyCheck::NoHandles);
+      fastMarching->SetTopologyCheck(FastMarchingFilterType::TopologyCheckType::NoHandles);
     }
     typedef typename FastMarchingFilterType::NodeContainer NodeContainer;
     typedef typename FastMarchingFilterType::NodeType      NodeType;
@@ -8472,12 +8473,12 @@ itkPropagateLabelsThroughMask(int argc, char * argv[])
     if (topocheck == 1) // Strict
     {
       // std::cout << " strict " << std::endl;
-      fastMarching->SetTopologyCheck(itk::FastMarchingTraitsEnums::TopologyCheck::Strict);
+      fastMarching->SetTopologyCheck(FastMarchingFilterType::TopologyCheckType::Strict);
     }
     if (topocheck == 2) // No handles
     {
       // std::cout << " no handles " << std::endl;
-      fastMarching->SetTopologyCheck(itk::FastMarchingTraitsEnums::TopologyCheck::NoHandles);
+      fastMarching->SetTopologyCheck(FastMarchingFilterType::TopologyCheckType::NoHandles);
     }
     typedef typename FastMarchingFilterType::NodePairContainerType NodeContainer;
     typedef typename FastMarchingFilterType::NodePairType          NodePairType;
@@ -10794,6 +10795,7 @@ template <unsigned int ImageDimension>
 int
 LabelThickness2(int argc, char * argv[])
 {
+#if 0 // Not needed in BTMLibTool
   typedef unsigned int                          LabelType;
   typedef itk::Image<LabelType, ImageDimension> LabelImageType;
   typedef float                                 RealType;
@@ -10875,6 +10877,7 @@ LabelThickness2(int argc, char * argv[])
   }
 
   ANTs::WriteImage<RealImageType>(thicknessPriorImage, outname.c_str());
+#endif
   return EXIT_SUCCESS;
 }
 
@@ -11360,7 +11363,7 @@ ConvertImageSetToMatrix(unsigned int argc, char * argv[])
     // Get the image dimension
     std::string                        fn = std::string(argv[j]);
     typename itk::ImageIOBase::Pointer imageIO =
-      itk::ImageIOFactory::CreateImageIO(fn.c_str(), itk::IOFileModeEnum::ReadMode);
+      itk::ImageIOFactory::CreateImageIO(fn.c_str(), itk::ImageIOFactory::ReadMode);
     imageIO->SetFileName(fn.c_str());
     imageIO->ReadImageInformation();
     for (unsigned int i = 0; i < imageIO->GetNumberOfDimensions(); i++)
@@ -11661,7 +11664,7 @@ ConvertImageSetToEigenvectors(unsigned int argc, char * argv[])
     // Get the image dimension
     std::string                        fn = std::string(argv[j]);
     typename itk::ImageIOBase::Pointer imageIO =
-      itk::ImageIOFactory::CreateImageIO(fn.c_str(), itk::IOFileModeEnum::ReadMode);
+      itk::ImageIOFactory::CreateImageIO(fn.c_str(), itk::ImageIOFactory::ReadMode);
     imageIO->SetFileName(fn.c_str());
     imageIO->ReadImageInformation();
     for (unsigned int i = 0; i < imageIO->GetNumberOfDimensions(); i++)

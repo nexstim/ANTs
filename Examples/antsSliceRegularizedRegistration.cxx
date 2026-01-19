@@ -69,7 +69,7 @@
 #include "itkNearestNeighborInterpolateImageFunction.h"
 #include "itkWindowedSincInterpolateImageFunction.h"
 #include "itkLabelImageGaussianInterpolateImageFunction.h"
-#include "itkLabelImageGenericInterpolateImageFunction.h"
+// #include "itkLabelImageGenericInterpolateImageFunction.h"
 #include <sstream>
 
 namespace ants
@@ -658,15 +658,15 @@ ants_slice_regularized_registration(itk::ants::CommandLineParser * parser)
           samplingStrategy = metricOption->GetFunction(currentStage)->GetParameter(4);
         }
         ConvertToLowerCase(samplingStrategy);
-        itk::ImageRegistrationMethodv4Enums::MetricSamplingStrategy metricSamplingStrategy =
-		  itk::ImageRegistrationMethodv4Enums::MetricSamplingStrategy::NONE;
+        TranslationRegistrationType::MetricSamplingStrategyType metricSamplingStrategy =
+            TranslationRegistrationType::MetricSamplingStrategyType::NONE;
         if (std::strcmp(samplingStrategy.c_str(), "random") == 0)
         {
-          metricSamplingStrategy = itk::ImageRegistrationMethodv4Enums::MetricSamplingStrategy::RANDOM;
+          metricSamplingStrategy = TranslationRegistrationType::MetricSamplingStrategyType::RANDOM;
         }
         if (std::strcmp(samplingStrategy.c_str(), "regular") == 0)
         {
-          metricSamplingStrategy = itk::ImageRegistrationMethodv4Enums::MetricSamplingStrategy::REGULAR;
+          metricSamplingStrategy = TranslationRegistrationType::MetricSamplingStrategyType::REGULAR;
         }
 
         if (std::strcmp(whichMetric.c_str(), "cc") == 0)
@@ -783,7 +783,7 @@ ants_slice_regularized_registration(itk::ants::CommandLineParser * parser)
             }
             catch (const itk::ExceptionObject & e)
             {
-              std::cerr << "Exception caught: " << e << std::endl;
+              std::cerr << "Exception caught: " << e.GetDescription() << std::endl;
               return EXIT_FAILURE;
             }
         }
