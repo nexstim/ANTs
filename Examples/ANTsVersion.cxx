@@ -16,7 +16,6 @@
  *
  *=========================================================================*/
 #include "ANTsVersion.h"
-#include "ANTsVersionConfig.h"
 
 #include <iostream> // std::cout, std::ios
 #include <sstream>  // std::ostringstream
@@ -33,7 +32,7 @@ MakeExtendedVersionString()
   return v.str();
 }
 
-static const std::string extendedVersionString = MakeExtendedVersionString();
+static const std::string extendedVersionString = "ANTs Version: 2.5.1";
 
 } // namespace
 
@@ -42,17 +41,17 @@ namespace ANTs
 unsigned int
 Version::MajorVersion()
 {
-  return ANTS_VERSION_MAJOR;
+  return 2;
 }
 unsigned int
 Version::MinorVersion()
 {
-  return ANTS_VERSION_MINOR;
+  return 5;
 }
 unsigned int
 Version::PatchVersion()
 {
-  return ANTS_VERSION_PATCH;
+  return 1;
 }
 unsigned int
 Version::TweakVersion()
@@ -62,8 +61,7 @@ Version::TweakVersion()
 const std::string &
 Version::VersionString()
 {
-  static const std::string v(ANTS_VERSION);
-  return v;
+  return "2.5.1";
 }
 const std::string &
 Version::BuildDate()
