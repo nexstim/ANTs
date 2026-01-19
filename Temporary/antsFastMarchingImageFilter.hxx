@@ -58,7 +58,7 @@ FMarchingImageFilter<TLevelSet, TSpeedImage>::FMarchingImageFilter()
   this->m_CollectPoints = false;
 
   this->m_NormalizationFactor = 1.0;
-  this->m_TopologyCheck = itk::FastMarchingTraitsEnums::TopologyCheck::Nothing;
+  this->m_TopologyCheck = TopologyCheckType::Nothing;
 }
 
 template <typename TLevelSet, typename TSpeedImage>
@@ -78,17 +78,17 @@ FMarchingImageFilter<TLevelSet, TSpeedImage>::PrintSelf(std::ostream & os, Inden
 
   switch (this->m_TopologyCheck)
   {
-    case itk::FastMarchingTraitsEnums::TopologyCheck::Nothing:
+    case TopologyCheckType::Nothing:
     {
       os << "None" << std::endl;
     }
     break;
-    case itk::FastMarchingTraitsEnums::TopologyCheck::NoHandles:
+    case TopologyCheckType::NoHandles:
     {
       os << "No handles" << std::endl;
     }
     break;
-    case itk::FastMarchingTraitsEnums::TopologyCheck::Strict:
+    case TopologyCheckType::Strict:
       os << "Strict" << std::endl;
       break;
     default:
@@ -166,7 +166,7 @@ FMarchingImageFilter<TLevelSet, TSpeedImage>::Initialize(LevelSetImageType * out
 
   // Checking for handles only requires an image to keep track of
   // connected components.
-  if (this->m_TopologyCheck == itk::FastMarchingTraitsEnums::TopologyCheck::NoHandles)
+  if (this->m_TopologyCheck == TopologyCheckType::NoHandles)
   {
     this->m_ConnectedComponentImage = AllocImage<ConnectedComponentImageType>(output->GetBufferedRegion(), 0);
     this->m_ConnectedComponentImage->SetOrigin(output->GetOrigin());
@@ -217,7 +217,7 @@ FMarchingImageFilter<TLevelSet, TSpeedImage>::Initialize(LevelSetImageType * out
       this->m_LabelImage->SetPixel(node.GetIndex(), AlivePoint);
 
       //
-      if (this->m_TopologyCheck == itk::FastMarchingTraitsEnums::TopologyCheck::NoHandles)
+      if (this->m_TopologyCheck == TopologyCheckType::NoHandles)
       {
         this->m_ConnectedComponentImage->SetPixel(
           node.GetIndex(), NumericTraits<typename ConnectedComponentImageType::PixelType>::OneValue());
@@ -228,7 +228,7 @@ FMarchingImageFilter<TLevelSet, TSpeedImage>::Initialize(LevelSetImageType * out
     }
   }
 
-  if (this->m_TopologyCheck == itk::FastMarchingTraitsEnums::TopologyCheck::NoHandles)
+  if (this->m_TopologyCheck == TopologyCheckType::NoHandles)
   {
     // Now create the connected component image and relabel such that labels
     // are 1, 2, 3, ...
@@ -283,7 +283,7 @@ FMarchingImageFilter<TLevelSet, TSpeedImage>::Initialize(LevelSetImageType * out
   }
 
   // initialize indices if this->m_TopologyCheck is activated
-  if (this->m_TopologyCheck != itk::FastMarchingTraitsEnums::TopologyCheck::Nothing)
+  if (this->m_TopologyCheck != TopologyCheckType::Nothing)
   {
     if (SetDimension == 2)
     {
@@ -345,18 +345,18 @@ FMarchingImageFilter<TLevelSet, TSpeedImage>::GenerateData()
       continue;
     }
 
-    if (this->m_TopologyCheck != itk::FastMarchingTraitsEnums::TopologyCheck::Nothing)
+    if (this->m_TopologyCheck != TopologyCheckType::Nothing)
     {
       bool wellComposednessViolation = this->DoesVoxelChangeViolateWellComposedness(node.GetIndex());
       bool strictTopologyViolation = this->DoesVoxelChangeViolateStrictTopology(node.GetIndex());
-      if (this->m_TopologyCheck == itk::FastMarchingTraitsEnums::TopologyCheck::Strict &&
+      if (this->m_TopologyCheck == TopologyCheckType::Strict &&
           (wellComposednessViolation || strictTopologyViolation))
       {
         output->SetPixel(node.GetIndex(), -0.00000001);
         this->m_LabelImage->SetPixel(node.GetIndex(), TopologyPoint);
         continue;
       }
-      if (this->m_TopologyCheck == itk::FastMarchingTraitsEnums::TopologyCheck::NoHandles)
+      if (this->m_TopologyCheck == TopologyCheckType::NoHandles)
       {
         if (wellComposednessViolation)
         {
@@ -432,7 +432,7 @@ FMarchingImageFilter<TLevelSet, TSpeedImage>::GenerateData()
 
     // for topology handle checks, we need to update the connected
     // component image at the current node with the appropriate label.
-    if (this->m_TopologyCheck == itk::FastMarchingTraitsEnums::TopologyCheck::NoHandles)
+    if (this->m_TopologyCheck == TopologyCheckType::NoHandles)
     {
       typename ConnectedComponentImageType::PixelType neighborhoodLabel =
         NumericTraits<typename ConnectedComponentImageType::PixelType>::ZeroValue();

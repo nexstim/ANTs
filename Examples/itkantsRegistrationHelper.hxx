@@ -1285,17 +1285,17 @@ RegistrationHelper<TComputeType, VImageDimension>::DoRegistration()
     const float samplingPercentage = stageMetricList[0].m_SamplingPercentage;
 
     const SamplingStrategy samplingStrategy = stageMetricList[0].m_SamplingStrategy;
-    typename AffineRegistrationType::MetricSamplingStrategyEnum metricSamplingStrategy =
-      AffineRegistrationType::MetricSamplingStrategyEnum::NONE;
+    typename AffineRegistrationType::MetricSamplingStrategyType metricSamplingStrategy =
+      AffineRegistrationType::MetricSamplingStrategyType::NONE;
     if (samplingStrategy == random)
     {
       this->Logger() << "  random sampling (percentage = " << samplingPercentage << ")" << std::endl;
-      metricSamplingStrategy = AffineRegistrationType::MetricSamplingStrategyEnum::RANDOM;
+      metricSamplingStrategy = AffineRegistrationType::MetricSamplingStrategyType::RANDOM;
     }
     else if (samplingStrategy == regular)
     {
       this->Logger() << "  regular sampling (percentage = " << samplingPercentage << ")" << std::endl;
-      metricSamplingStrategy = AffineRegistrationType::MetricSamplingStrategyEnum::REGULAR;
+      metricSamplingStrategy = AffineRegistrationType::MetricSamplingStrategyType::REGULAR;
     }
     else if (samplingStrategy == none)
     {
@@ -1819,7 +1819,7 @@ RegistrationHelper<TComputeType, VImageDimension>::DoRegistration()
         }
         catch (const itk::ExceptionObject & e)
         {
-          this->Logger() << "Exception caught: " << e << std::endl;
+          this->Logger() << "Exception caught: " << e.GetDescription() << std::endl;
           return EXIT_FAILURE;
         }
 
@@ -1952,7 +1952,7 @@ RegistrationHelper<TComputeType, VImageDimension>::DoRegistration()
         }
         catch (const itk::ExceptionObject & e)
         {
-          this->Logger() << "Exception caught: " << e << std::endl;
+          this->Logger() << "Exception caught: " << e.GetDescription() << std::endl;
           return EXIT_FAILURE;
         }
 
@@ -2132,7 +2132,7 @@ RegistrationHelper<TComputeType, VImageDimension>::DoRegistration()
           this->m_SmoothingSigmasAreInPhysicalUnits[currentStageNumber]);
 
         displacementFieldRegistration->SetMetricSamplingStrategy(
-          static_cast<typename DisplacementFieldRegistrationType::MetricSamplingStrategyEnum>(metricSamplingStrategy));
+          static_cast<typename DisplacementFieldRegistrationType::MetricSamplingStrategyType>(metricSamplingStrategy));
         displacementFieldRegistration->SetMetricSamplingPercentage(samplingPercentage);
 
         displacementFieldRegistration->SetLearningRate(learningRate);
@@ -2178,7 +2178,7 @@ RegistrationHelper<TComputeType, VImageDimension>::DoRegistration()
         }
         catch (const itk::ExceptionObject & e)
         {
-          this->Logger() << "Exception caught: " << e << std::endl;
+          this->Logger() << "Exception caught: " << e.GetDescription() << std::endl;
           return EXIT_FAILURE;
         }
 
@@ -2338,7 +2338,7 @@ RegistrationHelper<TComputeType, VImageDimension>::DoRegistration()
           }
           catch (const itk::ExceptionObject & e)
           {
-            this->Logger() << "Exception caught: " << e << std::endl;
+            this->Logger() << "Exception caught: " << e.GetDescription() << std::endl;
             return EXIT_FAILURE;
           }
 
@@ -2453,7 +2453,7 @@ RegistrationHelper<TComputeType, VImageDimension>::DoRegistration()
           }
           catch (const itk::ExceptionObject & e)
           {
-            this->Logger() << "Exception caught: " << e << std::endl;
+            this->Logger() << "Exception caught: " << e.GetDescription() << std::endl;
             return EXIT_FAILURE;
           }
 
@@ -2592,7 +2592,7 @@ RegistrationHelper<TComputeType, VImageDimension>::DoRegistration()
         }
         velocityFieldRegistration->SetNumberOfLevels(numberOfLevels);
         velocityFieldRegistration->SetMetricSamplingStrategy(
-          static_cast<typename VelocityFieldRegistrationType::MetricSamplingStrategyEnum>(metricSamplingStrategy));
+          static_cast<typename VelocityFieldRegistrationType::MetricSamplingStrategyType>(metricSamplingStrategy));
         velocityFieldRegistration->SetMetricSamplingPercentage(samplingPercentage);
         velocityFieldRegistration->SetLearningRate(learningRate);
         velocityFieldRegistration->SetConvergenceThreshold(convergenceThreshold);
@@ -2689,7 +2689,7 @@ RegistrationHelper<TComputeType, VImageDimension>::DoRegistration()
         }
         catch (const itk::ExceptionObject & e)
         {
-          this->Logger() << "Exception caught: " << e << std::endl;
+          this->Logger() << "Exception caught: " << e.GetDescription() << std::endl;
           return EXIT_FAILURE;
         }
         // Add calculated transform to the composite transform
@@ -2909,7 +2909,7 @@ RegistrationHelper<TComputeType, VImageDimension>::DoRegistration()
           }
           catch (const itk::ExceptionObject & e)
           {
-            this->Logger() << "Exception caught: " << e << std::endl;
+            this->Logger() << "Exception caught: " << e.GetDescription() << std::endl;
             return EXIT_FAILURE;
           }
           // Add calculated transform to the composite transform
@@ -3068,7 +3068,7 @@ RegistrationHelper<TComputeType, VImageDimension>::DoRegistration()
           }
           catch (const itk::ExceptionObject & e)
           {
-            this->Logger() << "Exception caught: " << e << std::endl;
+            this->Logger() << "Exception caught: " << e.GetDescription() << std::endl;
             return EXIT_FAILURE;
           }
           // Add calculated transform to the composite transform
@@ -3197,7 +3197,7 @@ RegistrationHelper<TComputeType, VImageDimension>::DoRegistration()
         }
         displacementFieldRegistration->SetSmoothingSigmasPerLevel(smoothingSigmasPerLevel);
         displacementFieldRegistration->SetMetricSamplingStrategy(
-          static_cast<typename DisplacementFieldRegistrationType::MetricSamplingStrategyEnum>(metricSamplingStrategy));
+          static_cast<typename DisplacementFieldRegistrationType::MetricSamplingStrategyType>(metricSamplingStrategy));
         displacementFieldRegistration->SetMetricSamplingPercentage(samplingPercentage);
         displacementFieldRegistration->SetOptimizer(optimizer2);
 
@@ -3232,7 +3232,7 @@ RegistrationHelper<TComputeType, VImageDimension>::DoRegistration()
         }
         catch (const itk::ExceptionObject & e)
         {
-          this->Logger() << "Exception caught: " << e << std::endl;
+          this->Logger() << "Exception caught: " << e.GetDescription() << std::endl;
           return EXIT_FAILURE;
         }
 
@@ -3388,7 +3388,7 @@ RegistrationHelper<TComputeType, VImageDimension>::DoRegistration()
           displacementFieldRegistration->SetFixedInitialTransform(this->m_FixedInitialTransform);
         }
         displacementFieldRegistration->SetMetricSamplingStrategy(
-          static_cast<typename DisplacementFieldRegistrationType::MetricSamplingStrategyEnum>(metricSamplingStrategy));
+          static_cast<typename DisplacementFieldRegistrationType::MetricSamplingStrategyType>(metricSamplingStrategy));
         displacementFieldRegistration->SetMetricSamplingPercentage(samplingPercentage);
         displacementFieldRegistration->SetOptimizer(optimizer2);
         displacementFieldRegistration->SetTransformParametersAdaptorsPerLevel(adaptors);
@@ -3414,7 +3414,7 @@ RegistrationHelper<TComputeType, VImageDimension>::DoRegistration()
         }
         catch (const itk::ExceptionObject & e)
         {
-          this->Logger() << "Exception caught: " << e << std::endl;
+          this->Logger() << "Exception caught: " << e.GetDescription() << std::endl;
           return EXIT_FAILURE;
         }
 
@@ -3519,7 +3519,7 @@ RegistrationHelper<TComputeType, VImageDimension>::DoRegistration()
         }
         catch (const itk::ExceptionObject & e)
         {
-          this->Logger() << "Exception caught: " << e << std::endl;
+          this->Logger() << "Exception caught: " << e.GetDescription() << std::endl;
           return EXIT_FAILURE;
         }
         // Add calculated transform to the composite transform
@@ -3614,13 +3614,13 @@ RegistrationHelper<TComputeType, VImageDimension>::SetRestoreStateTransform(cons
     //
     unsigned int numTransforms = compToRestore->GetNumberOfTransforms();
     if ((compToRestore->GetNthTransform(numTransforms - 1)->GetTransformCategory() ==
-         TransformType::TransformCategoryEnum::DisplacementField) &&
+         TransformType::TransformCategoryType::DisplacementField) &&
         (compToRestore->GetNthTransform(numTransforms - 2)->GetTransformCategory() ==
-         TransformType::TransformCategoryEnum::DisplacementField) &&
+         TransformType::TransformCategoryType::DisplacementField) &&
         (compToRestore->GetNthTransform(numTransforms - 3)->GetTransformCategory() ==
-         TransformType::TransformCategoryEnum::DisplacementField) &&
+         TransformType::TransformCategoryType::DisplacementField) &&
         (compToRestore->GetNthTransform(numTransforms - 4)->GetTransformCategory() ==
-         TransformType::TransformCategoryEnum::DisplacementField))
+         TransformType::TransformCategoryType::DisplacementField))
     {
       typename DisplacementFieldTransformType::Pointer fixedToMiddleForwardTx =
         dynamic_cast<DisplacementFieldTransformType *>(compToRestore->GetNthTransform(numTransforms - 4).GetPointer());
@@ -3794,7 +3794,7 @@ RegistrationHelper<TComputeType, VImageDimension>::CollapseDisplacementFieldTran
 {
   typename CompositeTransformType::Pointer combinedCompositeTransform = CompositeTransformType::New();
 
-  if (compositeTransform->GetTransformCategory() != TransformType::TransformCategoryEnum::DisplacementField)
+  if (compositeTransform->GetTransformCategory() != TransformType::TransformCategoryType::DisplacementField)
   {
     itkExceptionMacro("The composite transform is not composed strictly of displacement fields.");
   }
@@ -3894,7 +3894,7 @@ RegistrationHelper<TComputeType, VImageDimension>::CollapseCompositeTransform(
     collapsedCompositeTransform->AddTransform(this->CollapseLinearTransforms(compositeTransform));
     return collapsedCompositeTransform;
   }
-  else if (compositeTransform->GetTransformCategory() == TransformType::TransformCategoryEnum::DisplacementField)
+  else if (compositeTransform->GetTransformCategory() == TransformType::TransformCategoryType::DisplacementField)
   {
     collapsedCompositeTransform->AddTransform(this->CollapseDisplacementFieldTransforms(compositeTransform));
     collapsedCompositeTransform->FlattenTransformQueue();
@@ -3902,15 +3902,15 @@ RegistrationHelper<TComputeType, VImageDimension>::CollapseCompositeTransform(
   }
 
   // Find the first linear or displacement field transform
-  typename TransformType::TransformCategoryEnum currentTransformCategory =
-    TransformType::TransformCategoryEnum::UnknownTransformCategory;
+  typename TransformType::TransformCategoryType currentTransformCategory =
+    TransformType::TransformCategoryType::UnknownTransformCategory;
   unsigned int startIndex = 0;
   for (unsigned int n = 0; n < compositeTransform->GetNumberOfTransforms(); n++)
   {
-    typename TransformType::TransformCategoryEnum transformCategory =
+    typename TransformType::TransformCategoryType transformCategory =
       compositeTransform->GetNthTransform(n)->GetTransformCategory();
-    if (transformCategory == TransformType::TransformCategoryEnum::Linear ||
-        transformCategory == TransformType::TransformCategoryEnum::DisplacementField)
+    if (transformCategory == TransformType::TransformCategoryType::Linear ||
+        transformCategory == TransformType::TransformCategoryType::DisplacementField)
     {
       currentTransformCategory = transformCategory;
       startIndex = n;
@@ -3924,24 +3924,24 @@ RegistrationHelper<TComputeType, VImageDimension>::CollapseCompositeTransform(
 
   // If a linear or displacement field transform is found then we can break down the
   // composite transform into neighboring sets of like transform types.
-  if (currentTransformCategory != TransformType::TransformCategoryEnum::UnknownTransformCategory)
+  if (currentTransformCategory != TransformType::TransformCategoryType::UnknownTransformCategory)
   {
     CompositeTransformPointer currentCompositeTransform = CompositeTransformType::New();
     currentCompositeTransform->AddTransform(compositeTransform->GetNthTransform(startIndex));
     for (unsigned int n = startIndex + 1; n < compositeTransform->GetNumberOfTransforms(); n++)
     {
-      typename TransformType::TransformCategoryEnum transformCategory =
+      typename TransformType::TransformCategoryType transformCategory =
         compositeTransform->GetNthTransform(n)->GetTransformCategory();
       if (transformCategory == currentTransformCategory)
       {
         currentCompositeTransform->AddTransform(compositeTransform->GetNthTransform(n));
         if (n == compositeTransform->GetNumberOfTransforms() - 1)
         {
-          if (currentTransformCategory == TransformType::TransformCategoryEnum::Linear)
+          if (currentTransformCategory == TransformType::TransformCategoryType::Linear)
           {
             collapsedCompositeTransform->AddTransform(this->CollapseLinearTransforms(currentCompositeTransform));
           }
-          else if (currentTransformCategory == TransformType::TransformCategoryEnum::DisplacementField)
+          else if (currentTransformCategory == TransformType::TransformCategoryType::DisplacementField)
           {
             collapsedCompositeTransform->AddTransform(
               this->CollapseDisplacementFieldTransforms(currentCompositeTransform));
@@ -3950,12 +3950,12 @@ RegistrationHelper<TComputeType, VImageDimension>::CollapseCompositeTransform(
       }
       else
       {
-        if (currentTransformCategory == TransformType::TransformCategoryEnum::Linear)
+        if (currentTransformCategory == TransformType::TransformCategoryType::Linear)
         {
           collapsedCompositeTransform->AddTransform(this->CollapseLinearTransforms(currentCompositeTransform));
           currentCompositeTransform->ClearTransformQueue();
         }
-        else if (currentTransformCategory == TransformType::TransformCategoryEnum::DisplacementField)
+        else if (currentTransformCategory == TransformType::TransformCategoryType::DisplacementField)
         {
           collapsedCompositeTransform->AddTransform(
             this->CollapseDisplacementFieldTransforms(currentCompositeTransform));
@@ -3963,8 +3963,8 @@ RegistrationHelper<TComputeType, VImageDimension>::CollapseCompositeTransform(
         }
         currentTransformCategory = transformCategory;
 
-        if ((transformCategory == TransformType::TransformCategoryEnum::Linear ||
-             transformCategory == TransformType::TransformCategoryEnum::DisplacementField) &&
+        if ((transformCategory == TransformType::TransformCategoryType::Linear ||
+             transformCategory == TransformType::TransformCategoryType::DisplacementField) &&
             n < compositeTransform->GetNumberOfTransforms() - 1)
         {
           currentCompositeTransform->AddTransform(compositeTransform->GetNthTransform(n));

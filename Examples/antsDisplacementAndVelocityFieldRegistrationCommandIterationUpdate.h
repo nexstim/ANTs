@@ -486,7 +486,7 @@ public:
     {
       std::cout << "Can't write warped image " << currentFileName.str().c_str() << std::endl;
       std::cout << "Exception Object caught: " << std::endl;
-      std::cout << err << std::endl;
+      std::cout << err.GetDescription() << std::endl;
     }
   }
 

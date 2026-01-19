@@ -19,6 +19,7 @@ Program:   Advanced Normalization Tools
 #include "itkIndex.h"
 #include "itkLevelSet.h"
 #include "itkNeighborhoodIterator.h"
+#include "itkFastMarchingBase.h"
 
 #include "itkMath.h"
 
@@ -282,7 +283,7 @@ public:
   itkGetConstReferenceMacro(CollectPoints, bool);
   itkBooleanMacro(CollectPoints);
 
-  using TopologyCheckType = itk::FastMarchingTraitsEnums::TopologyCheck;
+  using TopologyCheckType = typename itk::FastMarchingBase<TSpeedImage, TLevelSet>::TopologyCheckType;
 
   /** Set/Get boolean macro indicating whether the user wants to check topology. */
   itkSetMacro(TopologyCheck, TopologyCheckType);

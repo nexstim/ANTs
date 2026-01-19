@@ -180,7 +180,7 @@ ReadTensorImage(itk::SmartPointer<TImageType> & target, const char * file, bool 
     catch (const itk::ExceptionObject & e)
     {
       std::cerr << "Exception caught during reference file reading " << std::endl;
-      std::cerr << e << " file " << file << std::endl;
+      std::cerr << e.GetDescription() << " file " << file << std::endl;
       target = nullptr;
       return;
     }
@@ -201,7 +201,7 @@ ReadTensorImage(itk::SmartPointer<TImageType> & target, const char * file, bool 
     catch (const itk::ExceptionObject & e)
     {
       std::cerr << "Exception caught during log tensor filter " << std::endl;
-      std::cerr << e << " file " << file << std::endl;
+      std::cerr << e.GetDescription() << " file " << file << std::endl;
       target = nullptr;
       return;
     }
@@ -298,7 +298,7 @@ ReadImage(itk::SmartPointer<TImageType> & target, const char * file)
     catch (const itk::ExceptionObject & e)
     {
       std::cerr << "Exception caught during reference file reading " << std::endl;
-      std::cerr << e << " file " << file << std::endl;
+      std::cerr << e.GetDescription() << " file " << file << std::endl;
       target = nullptr;
       std::exception();
       return false;
@@ -330,7 +330,7 @@ ReadImage(char * fn)
   catch (const itk::ExceptionObject & e)
   {
     std::cerr << "Exception caught during image reference file reading " << std::endl;
-    std::cerr << e << std::endl;
+    std::cerr << e.GetDescription() << std::endl;
     return nullptr;
   }
 
@@ -362,7 +362,7 @@ ReadTensorImage(char * fn, bool takelog = true)
   catch (const itk::ExceptionObject & e)
   {
     std::cerr << "Exception caught during tensor image reference file reading " << std::endl;
-    std::cerr << e << std::endl;
+    std::cerr << e.GetDescription() << std::endl;
     return nullptr;
   }
 
@@ -414,7 +414,7 @@ ReadLabeledPointSet(itk::SmartPointer<TPointSet> & target,
   catch (const itk::ExceptionObject & e)
   {
     std::cerr << "Exception caught during point set reference file reading " << std::endl;
-    std::cerr << e << std::endl;
+    std::cerr << e.GetDescription() << std::endl;
     return false;
   }
 
@@ -510,7 +510,7 @@ ReadLabeledPointSet(char * fn)
   catch (const itk::ExceptionObject & e)
   {
     std::cerr << "Exception caught during point set reference file reading " << std::endl;
-    std::cerr << e << std::endl;
+    std::cerr << e.GetDescription() << std::endl;
     return nullptr;
   }
 
