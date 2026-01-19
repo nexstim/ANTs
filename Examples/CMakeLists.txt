@@ -1,7 +1,74 @@
-SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
-## Note that the antsUtilities can always be built static.  It will then be linked
-## Directly into the other libraries.
-add_library(antsUtilities antsUtilities.cxx
+cmake_minimum_required(VERSION 3.26 FATAL_ERROR)
+
+project(ANTsLib)
+
+# Define build configurations
+IF(CMAKE_CONFIGURATION_TYPES)
+   SET(CMAKE_CONFIGURATION_TYPES Debug UsableDebug MinSizeRel RelWithDebInfo Release)
+   SET(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}"
+     CACHE STRING "Build configurations" FORCE)
+ENDIF()
+
+# postfixes for libraries
+SET(LIBRARY_DEBUG_POSTFIX ${ARCHITECTURE}_d CACHE STRING "")
+SET(LIBRARY_USABLEDEBUG_POSTFIX ${ARCHITECTURE}_u CACHE STRING "")
+SET(LIBRARY_RELEASE_POSTFIX ${ARCHITECTURE}_r CACHE STRING "")
+
+# CXX compiler flags
+SET(CMAKE_CXX_FLAGS  "/Zi /MP /W3 /Gy /Zc:wchar_t /Gm- /fp:precise /errorReport:none /GF /WX- /Zc:forScope /Gd /EHa /nologo /DNOMINMAX /DNO_WARN_MBCS_MFC_DEPRECATION /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_WARNINGS /DWIN32 /D_MBCS /DWINVER=0x0A00 /Zi /DQT_MESSAGELOGCONTEXT"
+	CACHE STRING "Flags used by the compiler during all build types.")
+
+SET(CMAKE_CXX_FLAGS_DEBUG"/MDd /RTCsu /Od /Ob0 /GS /D_DEBUG"
+	CACHE STRING "Flags used by the compiler during debug builds.")
+
+SET(CMAKE_CXX_FLAGS_USABLEDEBUG    "/MD /Od /Ob1 /Oi /GS /DNDEBUG /DQT_FORCE_ASSERTS"
+	CACHE STRING "Flags used by the compiler during usable debug builds.")
+
+SET(CMAKE_CXX_FLAGS_RELEASE "/MD /O2 /Oi /Ot /Oy /Ob2 /Gs /GL /DNDEBUG /Zi"
+	CACHE STRING "Flags used by the compiler during release builds.")
+
+# C compiler flags
+SET(CMAKE_C_FLAGS  "/Zi /MP /W3 /GS /Gy /Zc:wchar_t /Gm- /fp:precise /errorReport:none /GF /WX- /Zc:forScope /Gd /EHa /nologo /DNOMINMAX /DNO_WARN_MBCS_MFC_DEPRECATION /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_WARNINGS /DWIN32 /D_MBCS /DWINVER=0x0A00"
+	CACHE STRING "Flags used by the compiler during all build types.")
+
+SET(CMAKE_C_FLAGS_DEBUG "/MDd /RTCsu /Od /Ob0 /D_DEBUG"
+	CACHE STRING "Flags used by the compiler during debug builds.")
+
+SET(CMAKE_C_FLAGS_USABLEDEBUG "/MD /Od /Ob1 /Oi /GS /DNDEBUG"
+	CACHE STRING "Flags used by the compiler during usable debug builds.")
+
+SET(CMAKE_C_FLAGS_RELEASE "/MD /O2 /Oi /Ot /Oy /Ob2 /Gs /GL /DNDEBUG /Zi"
+	CACHE STRING "Flags used by the compiler during release builds.")
+
+
+# Linker flags for static libraries
+SET(CMAKE_STATIC_LINKER_FLAGS "/machine:x64 /NOLOGO /NODEFAULTLIB:libcmt.lib"
+	CACHE STRING  "Flags used by the linker during the creation of static libraries.")
+
+SET(CMAKE_STATIC_LINKER_FLAGS_DEBUG ""
+	CACHE STRING  "Flags used by the linker during debug builds.")
+
+SET(CMAKE_STATIC_LINKER_FLAGS_USABLEDEBUG ""
+	CACHE STRING  "Flags used by the linker during usable debug builds.")
+
+SET(CMAKE_STATIC_LINKER_FLAGS_RELEASE "/LTCG"
+	CACHE STRING  "Flags used by the linker during release builds.")
+
+# ITK from CHABLIS
+INCLUDE(${ITK_PATH})
+
+SET(ANTsLib_INCLUDES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
+file(GLOB ANTsLib_INCLUDES "${ANTsLib_INCLUDES_DIR}/*.h")
+
+include_directories (../Tensor)
+include_directories (../Utilities)
+include_directories (../ImageRegistration)
+include_directories (../Temporary)
+include_directories (${CMAKE_CURRENT_SOURCE_DIR})
+
+add_library(ANTsLib STATIC
+            antsUtilities.cxx
+			antsRegistration.cxx
             antsRegistrationTemplateHeader.cxx
             antsRegistration2DDouble.cxx antsRegistration2DFloat.cxx
             antsRegistration3DDouble.cxx antsRegistration3DFloat.cxx
@@ -11,251 +78,29 @@ add_library(antsUtilities antsUtilities.cxx
             ../Utilities/antsCommandLineParser.cxx
             ANTsVersion.cxx
             ImageMathHelper2D.cxx ImageMathHelper3D.cxx ImageMathHelper4D.cxx
+			antsApplyTransforms.cxx
+			antsRegistrationTemplateHeader.h
+			antsSliceRegularizedRegistration.cxx
+            ${ANTsLib_INCLUDES}
             )
-target_link_libraries(antsUtilities ${ITK_LIBRARIES} )
-install(TARGETS antsUtilities
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    COMPONENT RUNTIME_antsUtilities
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    COMPONENT RUNTIME_antsUtilities
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    COMPONENT DEVELOPMENT_antsUtilities
-  )
 
-macro(STATIC_ANTS_BUILD ANTS_FUNCTION_NAME EXTRA_LIBS)
-  set( ANTS_FUNCTION_NAME ${ANTS_FUNCTION_NAME} )
+target_compile_options(ANTsLib PRIVATE /bigobj)
 
-  add_library(l_${ANTS_FUNCTION_NAME} ${ANTS_FUNCTION_NAME}.cxx)
-  set_target_properties(l_${ANTS_FUNCTION_NAME} PROPERTIES
-    SOVERSION ${ANTS_VERSION_MAJOR}  VERSION ${${PROJECT_NAME}_VERSION})
-  message(STATUS "${ANTS_FUNCTION_NAME} ${EXTRA_LIBS}")
-  target_link_libraries(l_${ANTS_FUNCTION_NAME} antsUtilities ${EXTRA_LIBS} )
-  configure_file( template_for_executables.cxx.in cli_${ANTS_FUNCTION_NAME}.cxx )
-
-  if (ANTS_INSTALL_LIBS_ONLY)
-    install(TARGETS l_${ANTS_FUNCTION_NAME}
- #    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
- #    COMPONENT RUNTIME_${ANTS_FUNCTION_NAME}
-      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      COMPONENT RUNTIME_${ANTS_FUNCTION_NAME}
-      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      COMPONENT DEVELOPMENT_${ANTS_FUNCTION_NAME}
-    )
-  else()
-    add_executable( ${ANTS_FUNCTION_NAME} cli_${ANTS_FUNCTION_NAME}.cxx )
-    target_link_libraries( ${ANTS_FUNCTION_NAME} l_${ANTS_FUNCTION_NAME} )
-    install(TARGETS l_${ANTS_FUNCTION_NAME} ${ANTS_FUNCTION_NAME}
-      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-      COMPONENT RUNTIME_${ANTS_FUNCTION_NAME}
-      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      COMPONENT RUNTIME_${ANTS_FUNCTION_NAME}
-      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      COMPONENT DEVELOPMENT_${ANTS_FUNCTION_NAME}
-    )
-  endif()
-
-endmacro()
-
-macro(DYNAMIC_ANTS_BUILD ANTS_FUNCTION_NAME EXTRA_LIBS)
-  set( ANTS_FUNCTION_NAME ${ANTS_FUNCTION_NAME} )
-
-  add_library(l_${ANTS_FUNCTION_NAME} ${ANTS_FUNCTION_NAME}.cxx)
-  set_target_properties(l_${ANTS_FUNCTION_NAME} PROPERTIES
-    SOVERSION ${ANTS_VERSION_MAJOR}  VERSION ${${PROJECT_NAME}_VERSION})
-  message(STATUS "${ANTS_FUNCTION_NAME} ${EXTRA_LIBS}")
-  target_link_libraries(l_${ANTS_FUNCTION_NAME} antsUtilities ${EXTRA_LIBS} )
-  configure_file( template_for_executables.cxx.in cli_${ANTS_FUNCTION_NAME}.cxx )
-
-  if (ANTS_INSTALL_LIBS_ONLY)
-    install(TARGETS l_${ANTS_FUNCTION_NAME}
-  #   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  #   COMPONENT RUNTIME_${ANTS_FUNCTION_NAME}
-      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      COMPONENT RUNTIME_${ANTS_FUNCTION_NAME}
-      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      COMPONENT DEVELOPMENT_${ANTS_FUNCTION_NAME}
-  )
-  else()
-    add_executable( ${ANTS_FUNCTION_NAME} cli_${ANTS_FUNCTION_NAME}.cxx )
-    target_link_libraries( ${ANTS_FUNCTION_NAME} l_${ANTS_FUNCTION_NAME} )
-
-    install(TARGETS l_${ANTS_FUNCTION_NAME} ${ANTS_FUNCTION_NAME}
-      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-      COMPONENT RUNTIME_${ANTS_FUNCTION_NAME}
-      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      COMPONENT RUNTIME_${ANTS_FUNCTION_NAME}
-      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      COMPONENT DEVELOPMENT_${ANTS_FUNCTION_NAME}
-    )
-  endif()
-
-endmacro()
-
-
-#set(PROG_WITH_NO_FLAG simpleSynRegistration)
-#add_executable(${PROG_WITH_NO_FLAG} ${PROG_WITH_NO_FLAG}.cxx)
-#target_link_libraries(${PROG_WITH_NO_FLAG} antsUtilities ${ITK_LIBRARIES})
-
-
-set(CORE_ANTS_APPS
-  antsAffineInitializer
-  antsJointFusion
-  DenoiseImage
-  SurfaceBasedSmoothing
-  ThresholdImage
-  ResampleImage
-  sccan
-  N4BiasFieldCorrection
-  N3BiasFieldCorrection
-  KellyKapowski
-  antsRegistration
-  antsMotionCorrStats
-  antsMotionCorr
-  antsApplyTransforms
-  LabelGeometryMeasures
-  LabelClustersUniquely
-  Atropos
-  antsApplyTransformsToPoints
+target_include_directories(ANTsLib BEFORE PRIVATE
+	${ITK_INCLUDE_DIRS}
 )
 
-set(MORE_ANTS_APPS
-    antsAI
-    ANTSIntegrateVelocityField
-    antsJointTensorFusion
-    ImageMath
-    iMath
-    AddNoiseToImage
-    ANTS
-    ANTSJacobian
-    CreateJacobianDeterminantImage
-    PrintHeader
-    ResetDirection
-    ANTSUseLandmarkImagesToGetAffineTransform
-    ANTSUseLandmarkImagesToGetBSplineDisplacementField
-    ANTSUseDeformationFieldToGetAffineTransform
-    antsLandmarkBasedTransformInitializer
-    LaplacianThickness
-    SetOrigin
-    SetSpacing
-    SetDirectionByMatrix
-    SurfaceCurvature
-    ConvertScalarImageToRGB
-    CreateWarpedGridImage
-    MeasureImageSimilarity
-    ConvertToJpg
-    ConvertImage
-    ConvertImagePixelType
-    ConvertInputImagePixelTypeToFloat
-    FitBSplineToPoints
-    AverageTensorImages
-    ImageSetStatistics
-    MultiplyImages
-    SimulateDisplacementField
-    SmoothDisplacementField
-    SmoothImage
-    ClusterImageStatistics
-    LabelOverlapMeasures
-    LesionFilling
-    MeasureMinMaxMean
-    WarpImageMultiTransform
-    ComposeMultiTransform
-    MemoryTest
-    PermuteFlipImageOrientationAxes
-    ImageCompare
-    ResampleImageBySpacing
-    CopyImageHeaderInformation
-    WarpTimeSeriesImageMultiTransform
-    ExtractSliceFromImage
-    ExtractRegionFromImage
-    ExtractRegionFromImageByMask
-    PasteImageIntoImage
-    TileImages
-    CreateTiledMosaic
-    CreateImage
-    NonLocalSuperResolution
-    WarpTensorImageMultiTransform
-    ReorientTensorImage
-    RebaseTensorImage
-    KellySlater
-    CreateDTICohort
-    antsAlignOrigin
-    antsMotionCorrDiffusionDirection
-    antsSliceRegularizedRegistration
-    ANTSIntegrateVectorField
-    antsTransformInfo
-    antsUtilitiesTesting
-    AverageAffineTransform
-    AverageAffineTransformNoRigid
-    AverageImages
-    simpleSynRegistration
-    CompositeTransformUtil
-    CreateDisplacementField
-    ConvertTransformFile
-    compareTwoTransforms
-    SuperResolution
-    TimeSCCAN
-    TextureCooccurrenceFeatures
-    TextureRunLengthFeatures
-    ImageIntensityStatistics
-    GetConnectedComponentsFeatureImages
-    DeNrrd
-    StackSlices
-  )
+target_link_libraries(ANTsLib
+	PRIVATE ${ITK_LIBRARIES}
+)
 
-foreach(ANTS_APP ${CORE_ANTS_APPS})
-  if (BUILD_SHARED_LIBS)
-    DYNAMIC_ANTS_BUILD(${ANTS_APP} "")
-  else()
-    STATIC_ANTS_BUILD(${ANTS_APP} "")
-  endif()
-endforeach()
+target_compile_definitions(ANTsLib PRIVATE ANTS_INSTALL_LIBS_ONLY=ON)
+target_compile_definitions(ANTsLib PRIVATE USE_SYSTEM_ITK=ON)
 
-if (BUILD_ALL_ANTS_APPS)
-  foreach(ANTS_APP ${MORE_ANTS_APPS})
-    if (BUILD_SHARED_LIBS)
-     DYNAMIC_ANTS_BUILD(${ANTS_APP} "")
-    else()
-      STATIC_ANTS_BUILD(${ANTS_APP} "")
-    endif()
-  endforeach()
-else()
-  foreach(ANTS_APP ${MORE_ANTS_APPS})
-    if(ANTS_BUILD_${ANTS_APP})
-      if (BUILD_SHARED_LIBS)
-        DYNAMIC_ANTS_BUILD(${ANTS_APP} "")
-      else()
-        STATIC_ANTS_BUILD(${ANTS_APP} "")
-      endif()
-    endif()
-  endforeach()
-endif()
+target_compile_definitions(ANTsLib PRIVATE BUILD_ALL_ANTS_APPS=OFF)
+target_compile_definitions(ANTsLib PRIVATE BUILD_EXAMPLES=OFF)
+target_compile_definitions(ANTsLib PRIVATE BUILD_TESTING=OFF)
+target_compile_definitions(ANTsLib PRIVATE RUN_LONG_TESTS=OFF)
+target_compile_definitions(ANTsLib PRIVATE RUN_SHORT_TESTS=OFF)
 
-
-if(USE_VTK)
-set(VTK_ANTS_APPS
-    # ConvertVectorFieldToVTK
-    antsSurf
-    antsVol
-    GetMeshAndTopology
-    CheckTopology
-    WarpVTKPolyDataMultiTransform
-    # FLATFEM
-    # ConformalMapping
-    # ANTSConformalMapping
-  )
-
-foreach(ANTS_APP ${VTK_ANTS_APPS})
-
-  if (BUILD_SHARED_LIBS)
-    DYNAMIC_ANTS_BUILD(${ANTS_APP} "${VTK_LIBRARIES}")
-  else()
-    STATIC_ANTS_BUILD(${ANTS_APP} "${VTK_LIBRARIES}")
-  endif()
-
-endforeach()
-endif()
-
-## Build test option
-if(BUILD_TESTING)
-    add_subdirectory(TestSuite)
-endif()
+set_property(TARGET ANTsLib PROPERTY CXX_STANDARD 17)
